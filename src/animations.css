@@ -1,0 +1,23 @@
+@keyframes rotate {
+    0%{
+        transform: rotate(0deg);
+        fill: "#00D8FF";
+    }
+    50%{
+        fill: blue;
+    }
+    50%{
+        fill: "#00D8FF";
+    }
+    50%{
+        fill: blueviolet;
+    }
+    100%{
+        transform: rotate(360deg);
+        fill: "#00D8FF";
+    }
+  }
+  
+  .svg-element {
+    animation: rotate 20s linear infinite;
+  }
