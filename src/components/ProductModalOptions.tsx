@@ -31,7 +31,7 @@ const ProductOptions: React.FC<{ productId: string; stock: number }> = ({ produc
     setSuccess(null);
     try {
       const response = await axios.post(
-        'http://reactstore-a5hhdkhndkckfaf7.eastus2-01.azurewebsites.net/products/alterProductToCart',
+        import.meta.env.VITE_Backend_Domain_URL + '/products/alterProductToCart',
         { productid: productId, quantity },
         { withCredentials: true }
       );
@@ -53,7 +53,7 @@ const ProductOptions: React.FC<{ productId: string; stock: number }> = ({ produc
         step={1}
         marks
         min={1}
-        max={stock} // Limitar el slider al stock disponible
+        max={stock} // Limits slider to available stock
         valueLabelDisplay="auto"
         sx={{ marginBottom: 3 }}
       />
@@ -68,7 +68,7 @@ const ProductOptions: React.FC<{ productId: string; stock: number }> = ({ produc
             variant="contained"
             color="primary"
             onClick={handleAddToCart}
-            disabled={quantity < 1 || quantity > stock} // Validación interna del stock
+            disabled={quantity < 1 || quantity > stock} // Intern validation of stock
           >
             Add to Cart
           </Button>

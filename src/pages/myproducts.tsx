@@ -7,10 +7,10 @@ import {
   Container,
   CircularProgress,
   Box,
+  useMediaQuery,
 } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid2'; // Importar Grid2
 import ProductModal from '../components/MyProductModal';
-import { useNavigate } from 'react-router-dom';
 import theme from '../theme';
 
 export interface BaseProduct {
@@ -25,21 +25,23 @@ interface ProductsGridProps {
   fetchUserProducts: () => void;
 }
 
-const ProductsGrid: React.FC<ProductsGridProps> = ({ products, fetchUserProducts }) => {
-  const navigate = useNavigate();
+const MyProducts: React.FC<ProductsGridProps> = ({ products, fetchUserProducts }) => {
   const [selectedProduct, setSelectedProduct] = useState<BaseProduct | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loading, setLoading] = useState(true); // Estado para manejar la carga
+  const [loading, setLoading] = useState(true); // State to handle loading
 
-  // Efecto para cargar los productos al montar el componente
+  // Hook to detect screen size
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm')); // Small screens (less than 600px)
+
+  // Effect to load products when the component mounts
   useEffect(() => {
     const loadProducts = async () => {
       try {
-        await fetchUserProducts(); // Llama a la función para cargar los productos
+        await fetchUserProducts(); // Call the function to load products
       } catch (error) {
         console.error('Error loading products:', error);
       } finally {
-        setLoading(false); // Finaliza la carga
+        setLoading(false); // End loading
       }
     };
 
@@ -56,7 +58,7 @@ const ProductsGrid: React.FC<ProductsGridProps> = ({ products, fetchUserProducts
     setIsModalOpen(false);
   };
 
-  // Mostrar un indicador de carga mientras los productos se están cargando
+  // Show a loading indicator while products are being loaded
   if (loading) {
     return (
       <Box
@@ -73,7 +75,7 @@ const ProductsGrid: React.FC<ProductsGridProps> = ({ products, fetchUserProducts
   return (
     <Container sx={{ mt: 4 }}>
       {products.length === 0 ? (
-        // Vista alternativa cuando no hay productos
+        // Alternative view when there are no products
         <Box
           display="flex"
           flexDirection="column"
@@ -86,9 +88,21 @@ const ProductsGrid: React.FC<ProductsGridProps> = ({ products, fetchUserProducts
           p={2}
           borderRadius={2}
         >
-          <svg style={{ fill: theme.palette.text.secondary }} fill="#000000" height="20em" width="20em" version="1.1" id="Filled_Icons" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="-3.36 -3.36 30.72 30.72" enable-background="new 0 0 24 24">
-            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+          <svg
+            style={{ fill: theme.palette.text.secondary }}
+            fill="#000000"
+            height="20em"
+            width="20em"
+            version="1.1"
+            id="Filled_Icons"
+            xmlns="http://www.w3.org/2000/svg"
+            x="0px"
+            y="0px"
+            viewBox="-3.36 -3.36 30.72 30.72"
+            enable-background="new 0 0 24 24"
+          >
+            <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+            <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
             <g id="SVGRepo_iconCarrier">
               <g id="Status-Error-Filled">
                 <path d="M12,0C5.37,0,0,5.37,0,12s5.37,12,12,12s12-5.37,12-12S18.63,0,12,0z M18.38,16.62l-1.77,1.77L12,13.77l-4.62,4.62 l-1.77-1.77L10.23,12L5.62,7.38l1.77-1.77L12,10.23l4.62-4.62l1.77,1.77L13.77,12L18.38,16.62z"></path>
@@ -100,16 +114,21 @@ const ProductsGrid: React.FC<ProductsGridProps> = ({ products, fetchUserProducts
           </Typography>
         </Box>
       ) : (
-        // Vista normal cuando hay productos
-        <Grid container spacing={5} justifyContent="center" overflow="auto" bgcolor="#e8e8e8" p={2} height={650} borderRadius={2}>
+        // Normal view when there are products
+        <Grid
+          container
+          spacing={isSmallScreen ? 2 : 4} // Adjust spacing on small screens
+          justifyContent="center"
+          overflow="auto"
+          bgcolor="#e8e8e8"
+          p={2}
+          height={650}
+          borderRadius={2}
+        >
           {products.map((prod) => (
             <Grid
-              size={{
-                xs: 12,
-                sm: 6,
-                md: 'auto',
-              }}
               key={prod.productid}
+              component="div" // Especificar el componente base
               onClick={() => handleOpenModal(prod)}
               sx={{ cursor: 'pointer' }}
               tabIndex={0}
@@ -119,10 +138,7 @@ const ProductsGrid: React.FC<ProductsGridProps> = ({ products, fetchUserProducts
                 <CardMedia
                   component="img"
                   sx={{
-                    height: {
-                      xs: 100,
-                      lg: 220,
-                    },
+                    height: isSmallScreen ? 150 : 220, // Adjust height on small screens
                     objectFit: 'cover',
                   }}
                   image={prod.imageurls[0] || '/path-to-placeholder-image.jpg'}
@@ -142,13 +158,15 @@ const ProductsGrid: React.FC<ProductsGridProps> = ({ products, fetchUserProducts
         </Grid>
       )}
 
-      <ProductModal
-        productId={selectedProduct?.productid}
-        open={isModalOpen}
-        onClose={handleCloseModal}
-      />
+      {selectedProduct && (
+        <ProductModal
+          productId={selectedProduct.productid}
+          open={isModalOpen}
+          onClose={handleCloseModal}
+        />
+      )}
     </Container>
   );
 };
 
-export default ProductsGrid;
+export default MyProducts;

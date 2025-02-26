@@ -23,7 +23,7 @@ export interface Product {
 }
 
 interface ProductModalProps {
-  productId: string | null; // Solo el ID del producto
+  productId: string | null; // Only the product's ID
   open: boolean;
   onClose: () => void;
 }
@@ -31,25 +31,25 @@ interface ProductModalProps {
 const CartProductModal: React.FC<ProductModalProps> = ({ productId, open, onClose }) => {
   
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [selectedImage, setSelectedImage] = useState<string>(''); // Estado para la imagen principal
-  const [loading, setLoading] = useState<boolean>(false); // Estado de carga
-  const [error, setError] = useState<string | null>(null); // Estado para manejar errores
+  const [selectedImage, setSelectedImage] = useState<string>(''); // State for main image
+  const [loading, setLoading] = useState<boolean>(false); // Loading state
+  const [error, setError] = useState<string | null>(null); // State for error handeling
 
-  // Función para obtener los detalles del producto
+  // Function to get details from a product
   const fetchSelectedProduct = async () => {
-    if (!productId) return; // Si no hay ID, no hacemos nada
+    if (!productId) return; // If there is no an ID, It doesn't do nothing
     setLoading(true);
     setError(null);
 
     try {
       const response = await axios.post(
-        'http://reactstore-a5hhdkhndkckfaf7.eastus2-01.azurewebsites.net/products/showProduct',
+        import.meta.env.VITE_Backend_Domain_URL + '/products/showProduct',
         { productid: productId },
         { withCredentials: true }
       );
-      const product = response.data.product; // Suponiendo que el backend devuelve `product`
+      const product = response.data.product; // Suposing backend gives back `product`
       setSelectedProduct(product);
-      setSelectedImage(product.imageurls[0] || ''); // Establecer la primera imagen
+      setSelectedImage(product.imageurls[0] || ''); // Sets the first image
     } catch (err) {
       console.error('Error fetching product details:', err);
       setError('Failed to load product details.');
@@ -58,7 +58,7 @@ const CartProductModal: React.FC<ProductModalProps> = ({ productId, open, onClos
     }
   };
 
-  // Llamar a `fetchSelectedProduct` cada vez que el modal se abra o cambie el ID
+  // Calls `fetchSelectedProduct` each time the modal opens or changes the ID
   useEffect(() => {
     if (open) {
       fetchSelectedProduct();
@@ -77,16 +77,16 @@ const CartProductModal: React.FC<ProductModalProps> = ({ productId, open, onClos
           <Typography variant="h6" color="error">{error}</Typography>
         ) : selectedProduct ? (
           <>
-            {/* Galería de miniaturas */}
+            {/* Miniatures gallery */}
             <Box sx={{display: "flex", flexDirection: 'row' }}>
               <ImageList sx={{ height: 420 }} cols={1} rowHeight={100}>
                 {(selectedProduct.imageurls || []).map((url, index) => (
                   <ImageListItem
                     key={index}
-                    onMouseEnter={() => setSelectedImage(url)} // Cambiar imagen al pasar el cursor
+                    onMouseEnter={() => setSelectedImage(url)} // Change image when hover the image
                     sx={{
                       cursor: 'pointer',
-                      border: selectedImage === url ? '2px solid blue' : 'none', // Resaltar miniatura activa
+                      border: selectedImage === url ? '2px solid blue' : 'none', // Highlights the active miniature
                     }}
                   >
                     <img
@@ -102,7 +102,7 @@ const CartProductModal: React.FC<ProductModalProps> = ({ productId, open, onClos
                 ))}
               </ImageList>
               <img
-                src={selectedImage} // Imagen principal basada en el estado
+                src={selectedImage} // Main image based on state
                 alt="Selected product"
                 style={{
                   width: '30em',
@@ -113,7 +113,7 @@ const CartProductModal: React.FC<ProductModalProps> = ({ productId, open, onClos
               />
             </Box>
 
-            {/* Imagen principal y detalles del producto */}
+            {/* Main image and details of the product*/}
             <Box flex={1} display="flex" flexDirection="column" gap={2} >
               <DialogTitle variant="h3">{selectedProduct.name || 'No title'}</DialogTitle>
               <Typography variant="h4">
@@ -137,7 +137,7 @@ const CartProductModal: React.FC<ProductModalProps> = ({ productId, open, onClos
             </Box>
           </>
         ) : (
-          <Typography variant="h6">Producto no encontrado.</Typography>
+          <Typography variant="h6">Product not found.</Typography>
         )}
       </DialogContent>
 

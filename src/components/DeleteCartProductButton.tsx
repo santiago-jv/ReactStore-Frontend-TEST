@@ -13,7 +13,7 @@ import {
   Chip,
 } from '@mui/material';
 
-const DeleteProductButton: React.FC<{ productId: string; onDeleteSuccess?: () => void }> = ({ productId, onDeleteSuccess }) => {
+const DeleteCartProductButton: React.FC<{ productId: string; onDeleteSuccess?: () => void }> = ({ productId, onDeleteSuccess }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,14 +23,14 @@ const DeleteProductButton: React.FC<{ productId: string; onDeleteSuccess?: () =>
     setError(null);
     try {
       const response = await axios.post(
-        'http://reactstore-a5hhdkhndkckfaf7.eastus2-01.azurewebsites.net/cart/deleteProduct',
+        import.meta.env.VITE_Backend_Domain_URL + '/cart/deleteProduct',
         { productid: productId },
         { withCredentials: true }
       );
       alert('Product deleted successfully: ' + response.data.message);
       setOpen(false);
       if (onDeleteSuccess) {
-        onDeleteSuccess(); // Callback para actualizar la lista u otras acciones
+        onDeleteSuccess(); // Callback to update the list and other actions
       }
     } catch (err: any) {
       console.error('Error deleting product:', err);
@@ -76,4 +76,4 @@ const DeleteProductButton: React.FC<{ productId: string; onDeleteSuccess?: () =>
   );
 };
 
-export default DeleteProductButton;
+export default DeleteCartProductButton;

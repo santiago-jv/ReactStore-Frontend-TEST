@@ -24,32 +24,32 @@ export interface Product {
 }
 
 interface ProductModalProps {
-  productId: string | null; // Solo el ID del producto
+  productId: string | null; // Only product ID
   open: boolean;
   onClose: () => void;
 }
 
 const ProductModal: React.FC<ProductModalProps> = ({ productId, open, onClose }) => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [selectedImage, setSelectedImage] = useState<string>(''); // Estado para la imagen principal
-  const [loading, setLoading] = useState<boolean>(false); // Estado de carga
-  const [error, setError] = useState<string | null>(null); // Estado para manejar errores
+  const [selectedImage, setSelectedImage] = useState<string>(''); // State for main image
+  const [loading, setLoading] = useState<boolean>(false); // Loading state
+  const [error, setError] = useState<string | null>(null); // State for error handeling
 
-  // Función para obtener los detalles del producto
+  // Function to get product details
   const fetchSelectedProduct = async () => {
-    if (!productId) return; // Si no hay ID, no hacemos nada
+    if (!productId) return; // If there's no ID, nothing happens
     setLoading(true);
     setError(null);
 
     try {
       const response = await axios.post(
-        'http://reactstore-a5hhdkhndkckfaf7.eastus2-01.azurewebsites.net/products/showProduct',
+        import.meta.env.VITE_Backend_Domain_URL + '/products/showProduct',
         { productid: productId },
         { withCredentials: true }
       );
-      const product = response.data.product; // Suponiendo que el backend devuelve `product`
+      const product = response.data.product; // Suposing backend gives back a `product`
       setSelectedProduct(product);
-      setSelectedImage(product.imageurls[0] || ''); // Establecer la primera imagen
+      setSelectedImage(product.imageurls[0] || ''); // Sets the first image
     } catch (err) {
       console.error('Error fetching product details:', err);
       setError('Failed to load product details.');
@@ -58,7 +58,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ productId, open, onClose })
     }
   };
 
-  // Llamar a `fetchSelectedProduct` cada vez que el modal se abra o cambie el ID
+  // Calls `fetchSelectedProduct` each time the modal opens or changes the ID
   useEffect(() => {
     if (open) {
       fetchSelectedProduct();
@@ -83,10 +83,10 @@ const ProductModal: React.FC<ProductModalProps> = ({ productId, open, onClose })
                 {(selectedProduct.imageurls || []).map((url, index) => (
                   <ImageListItem
                     key={index}
-                    onMouseEnter={() => setSelectedImage(url)} // Cambiar imagen al pasar el cursor
+                    onMouseEnter={() => setSelectedImage(url)} // Changes the image while hover
                     sx={{
                       cursor: 'pointer',
-                      border: selectedImage === url ? '2px solid blue' : 'none', // Resaltar miniatura activa
+                      border: selectedImage === url ? '2px solid blue' : 'none', // Highlights active miniature
                     }}
                   >
                     <img
@@ -102,7 +102,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ productId, open, onClose })
                 ))}
               </ImageList>
               <img
-                src={selectedImage} // Imagen principal basada en el estado
+                src={selectedImage} // Main image based on state
                 alt="Selected product"
                 style={{
                   width: '30em',
@@ -113,7 +113,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ productId, open, onClose })
               />
             </Box>
 
-            {/* Imagen principal y detalles del producto */}
+            {/* Main image and product details */}
             <Box flex={1} display="flex" flexDirection="column" gap={2} >
               <DialogTitle variant="h3">{selectedProduct.name || 'No title'}</DialogTitle>
               <Typography variant="h4">
@@ -133,7 +133,9 @@ const ProductModal: React.FC<ProductModalProps> = ({ productId, open, onClose })
                   marginTop: 'auto'
                 }}
               >
-                <ProductOptions productId={productId} stock={selectedProduct.stock} />
+                {selectedProduct && productId && (
+                  <ProductOptions productId={productId} stock={selectedProduct.stock} />
+                )}
               </DialogActions>
             </Box>
           </>

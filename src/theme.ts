@@ -3,23 +3,23 @@ import { createTheme } from '@mui/material/styles';
 const theme = createTheme({
   palette: {
     background: {
-      default: '#242424', // Cambia esto al color de fondo que desees
+      default: '#242424', // Change this to the desired background color
     },
   },
   components: {
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          backgroundColor: '#f3f3f3', // Cambia esto al color que prefieras
+          backgroundColor: '#f3f3f3', // Change this to the preferred color
         },
         ':root': {
           display: 'flex',
-          justifyContent: 'center', // Centra horizontalmente
-          alignItems: 'center',     // Centra verticalmente
-          height: '100vh',          // Asegura que ocupe toda la altura de la ventana
-          width: '100vw',           // Asegura que ocupe todo el ancho de la ventana
-          margin: 0,                // Elimina márgenes
-          padding: 0,               // Elimina rellenos
+          justifyContent: 'center', // Center horizontally
+          alignItems: 'center',     // Center vertically
+          height: '100vh',          // Ensure it takes up the full height of the window
+          width: '100vw',           // Ensure it takes up the full width of the window
+          margin: 0,                // Remove margins
+          padding: 0,               // Remove padding
         },
       },
     },

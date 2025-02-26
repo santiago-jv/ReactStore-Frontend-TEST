@@ -1,11 +1,11 @@
 import React from 'react';
-import '../animations.css'; // Asegúrate de importar el archivo CSS
+import '../animations.css';
 
 const AnimatedSVG: React.FC = () => {
   return (
     <svg
       width={'5em'}
-      className="svg-element" // Clase para la animación
+      className="svg-element" // Class for animation
       viewBox="0 -14 256 256"
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"

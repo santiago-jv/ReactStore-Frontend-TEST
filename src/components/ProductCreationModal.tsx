@@ -53,7 +53,7 @@ const ProductCreationModal: React.FC<ProductCreationModalProps> = ({
 
   React.useEffect(() => {
     axios
-      .get('http://reactstore-a5hhdkhndkckfaf7.eastus2-01.azurewebsites.net/products/showCategories')
+      .get(import.meta.env.VITE_Backend_Domain_URL + '/products/showCategories')
       .then((response) => {
         setCategories(response.data.categories || []);
       })
@@ -64,6 +64,14 @@ const ProductCreationModal: React.FC<ProductCreationModalProps> = ({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
+    // Validación para price y stock
+    if (name === 'price' || name === 'stock') {
+      const numericValue = parseFloat(value);
+      if (numericValue <= 0) {
+        return; // No actualiza el estado si el valor es menor o igual a cero
+      }
+    }
 
     setFormData({
       ...formData,
@@ -96,6 +104,15 @@ const ProductCreationModal: React.FC<ProductCreationModalProps> = ({
     onCreateProduct(formDataToSend); // Llama a la función de creación de productos en App
   };
 
+  // Verifica si todos los campos están llenos y son válidos
+  const isFormValid =
+    formData.name.trim() !== '' &&
+    formData.description.trim() !== '' &&
+    formData.price > 0 &&
+    formData.stock > 0 &&
+    formData.categoryid !== 0 &&
+    formData.images.length > 0;
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>Create Product</DialogTitle>
@@ -108,6 +125,8 @@ const ProductCreationModal: React.FC<ProductCreationModalProps> = ({
           variant="outlined"
           value={formData.name}
           onChange={handleInputChange}
+          error={formData.name.trim() === ''} // Muestra un error si el nombre está vacío
+          helperText={formData.name.trim() === '' ? 'Name is required' : ''}
         />
         <TextField
           fullWidth
@@ -117,6 +136,8 @@ const ProductCreationModal: React.FC<ProductCreationModalProps> = ({
           variant="outlined"
           value={formData.description}
           onChange={handleInputChange}
+          error={formData.description.trim() === ''} // Muestra un error si la descripción está vacía
+          helperText={formData.description.trim() === '' ? 'Description is required' : ''}
         />
         <TextField
           fullWidth
@@ -127,6 +148,8 @@ const ProductCreationModal: React.FC<ProductCreationModalProps> = ({
           variant="outlined"
           value={formData.price}
           onChange={handleInputChange}
+          error={formData.price <= 0} // Muestra un error si el precio es menor o igual a cero
+          helperText={formData.price <= 0 ? 'Price must be greater than zero' : ''}
         />
         <TextField
           fullWidth
@@ -137,6 +160,8 @@ const ProductCreationModal: React.FC<ProductCreationModalProps> = ({
           variant="outlined"
           value={formData.stock}
           onChange={handleInputChange}
+          error={formData.stock <= 0} // Muestra un error si el stock es menor o igual a cero
+          helperText={formData.stock <= 0 ? 'Stock must be greater than zero' : ''}
         />
         <FormControl fullWidth margin="normal">
           <InputLabel id="category-select-label">Category</InputLabel>
@@ -146,13 +171,22 @@ const ProductCreationModal: React.FC<ProductCreationModalProps> = ({
             value={formData.categoryid}
             onChange={handleSelectChange}
             label="Category"
+            error={formData.categoryid === 0} // Muestra un error si no se ha seleccionado una categoría
           >
+            <MenuItem value={0} disabled>
+              Select a category
+            </MenuItem>
             {categories.map((cat) => (
               <MenuItem key={cat.categoryid} value={cat.categoryid}>
                 {cat.category}
               </MenuItem>
             ))}
           </Select>
+          {formData.categoryid === 0 && (
+            <Typography variant="caption" color="error">
+              Category is required
+            </Typography>
+          )}
         </FormControl>
         <Typography variant="body2" sx={{ marginTop: 2 }}>
           Upload images:
@@ -184,6 +218,11 @@ const ProductCreationModal: React.FC<ProductCreationModalProps> = ({
             ))}
           </Grid>
         )}
+        {formData.images.length === 0 && (
+          <Typography variant="caption" color="error">
+            At least one image is required
+          </Typography>
+        )}
         {error && (
           <Alert severity="error" sx={{ width: '100%', mt: 2 }}>
             {error}
@@ -192,7 +231,12 @@ const ProductCreationModal: React.FC<ProductCreationModalProps> = ({
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSubmit} variant="contained" color="primary">
+        <Button
+          onClick={handleSubmit}
+          variant="contained"
+          color="primary"
+          disabled={!isFormValid} // Disables the button if the form is not valid
+        >
           Submit
         </Button>
       </DialogActions>
