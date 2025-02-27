@@ -9,7 +9,5 @@ export default defineConfig({
     emptyOutDir: true, // Limpia la carpeta dist antes de construir
 
   },
-  server: {
-    historyApiFallback: true, // Asegura que el frontend maneja las rutas
-  }
+  base:'/'
 });
