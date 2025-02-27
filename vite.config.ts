@@ -7,8 +7,9 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
     emptyOutDir: true, // Limpia la carpeta dist antes de construir
+
+  },
   server: {
     historyApiFallback: true, // Asegura que el frontend maneja las rutas
   }
-  },
 });
