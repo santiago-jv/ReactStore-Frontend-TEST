@@ -28,10 +28,12 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-
+        
       - name: Build project
         run: npm run build
-
+        env:
+          VITE_Backend_Domain_URL: ${{ secrets.VITE_BACKEND_DOMAIN_URL }}
+          
       # Paso adicional para listar los archivos en la carpeta `dist`
       - name: List files in output directory
         run: ls -R dist
