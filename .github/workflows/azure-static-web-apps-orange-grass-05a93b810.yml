@@ -32,6 +32,10 @@ jobs:
       - name: Build project
         run: npm run build
 
+      # Paso adicional para listar los archivos en la carpeta `dist`
+      - name: List files in output directory
+        run: ls -R dist
+
       - name: Deploy to Azure Static Web Apps
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
