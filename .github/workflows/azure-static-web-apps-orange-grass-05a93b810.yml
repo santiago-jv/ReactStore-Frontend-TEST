@@ -26,16 +26,13 @@ jobs:
           node-version: 20 # Asegúrate de usar la versión de Node.js requerida por tu proyecto
           cache: 'npm'
 
-      - name: Verificar variable de entorno
-        run: echo "VITE_Backend_Domain_URL=${{ secrets.VITE_BACKEND_DOMAIN_URL }}"
+
   
       - name: Install dependencies
         run: npm install
         
       - name: Build project
         run: npm run build
-        env:
-          VITE_Backend_Domain_URL: ${{ secrets.VITE_BACKEND_DOMAIN_URL }}
           
       # Paso adicional para listar los archivos en la carpeta `dist`
       - name: List files in output directory
